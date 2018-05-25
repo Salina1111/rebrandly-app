@@ -49,9 +49,17 @@ class CreateLink extends Component{
         </Card>
       </div>
       </div>
-       ) 
-        
+       )     
     }
+
+     ontitlechange(e){
+        this.setState({title:e.target.value})
+    }
+
+    ondestinationchange(e){
+        this.setState({destination:e.target.value})
+    }
+
 
   onSubmit(){
     const apikey=sessionStorage.getItem('apikey')
@@ -60,7 +68,7 @@ class CreateLink extends Component{
       destination : this.state.destination,
       
     }
-    debugger
+
     fetch ('https://api.rebrandly.com/v1/links',{
       method :'POST',
       headers :{
@@ -69,6 +77,7 @@ class CreateLink extends Component{
       },
       body:JSON.stringify(data)
     })
+
     .then(response =>{
       if(response.ok){
         response.json()
@@ -82,6 +91,31 @@ class CreateLink extends Component{
      
     }) 
    
+  }
+
+  componentWillMount() {
+    const apikey=sessionStorage.getItem('apikey')
+    fetch (`https://api.rebrandly.com/v1/links/${this.state.id}`,{
+      headers:{
+        apikey:apikey
+      }
+    })
+    .then(response =>{
+      if(response.ok){
+        response.json()
+        .then (links =>{
+          
+        this.setState({
+          title: links.title,
+          destination:links.destination
+        })
+        })
+      }
+      else {
+        alert(response.statusText)
+      }
+    })
+  
   }
     
 }
